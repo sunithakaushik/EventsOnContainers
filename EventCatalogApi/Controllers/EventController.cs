@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
+// http link from postman would be //localhost:6700/api/event/events/?pageIndex=0&pageSize=7
 namespace EventCatalogApi.Controllers
 {
     [Route("api/[controller]")]

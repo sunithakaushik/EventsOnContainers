@@ -33,6 +33,17 @@ namespace EventCatalogApi
             var password = Configuration["DatabasePassword"];
             var connectionString = $"Server={server};Database={database};User Id={user};Password={password}";
             services.AddDbContext<CatalogContext>(options => options.UseSqlServer(connectionString));
+            services.AddSwaggerGen(options =>
+            {
+                // options.DescribeAllEnumsAsStrings();
+                options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+                {
+                    Title = "EventsOnContainers - Event Catalog API",
+                    Version = "v1",
+                    Description = "Event Catalog Microservice",
+                    //TermsOfService = new Uri("Terms Of Service")
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -46,6 +57,10 @@ namespace EventCatalogApi
             app.UseRouting();
 
             app.UseAuthorization();
+            app.UseSwagger().UseSwaggerUI(e =>
+           {
+               e.SwaggerEndpoint($"/swagger/v1/swagger.json", "EventCatalogAPI V1");
+           });
 
             app.UseEndpoints(endpoints =>
             {

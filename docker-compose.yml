@@ -65,7 +65,7 @@ services:
     image: events/webmvc
     container_name: eventshop
     environment:
-      CatalogUrl: http://catalog     
+      CatalogUrl: http://catalog
       IdentityUrl: http://192.168.1.14:6900
       CallBackUrl: http://localhost:5230
     ports:
@@ -74,3 +74,4 @@ services:
       - frontend
     depends_on:
       - catalog
+      - tokenserver

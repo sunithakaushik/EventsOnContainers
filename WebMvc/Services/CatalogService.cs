@@ -38,7 +38,7 @@ namespace WebMvc.Services
                 new SelectListItem
                 {
                     // Built in asp.net properties for selectlistitem
-                    Value = null,
+                    Value = "-1",
                     Text = "All",
                     Selected = true
                 }
@@ -66,7 +66,7 @@ namespace WebMvc.Services
                 new SelectListItem
                 {
                     // Built in asp.net properties for selectlistitem
-                    Value = null,
+                    Value = "-1",
                     Text = "All",
                     Selected = true
                 }

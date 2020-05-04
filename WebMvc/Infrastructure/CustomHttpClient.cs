@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace WebMvc.Infrastructure
@@ -20,7 +21,7 @@ namespace WebMvc.Infrastructure
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
             if (authorizationToken != null)
             {
-                // Do this after token service
+                 requestMessage.Headers.Authorization = new AuthenticationHeaderValue(authorizationMethod, authorizationToken);
             }
             //step 7 in module 16 http client receives the response message from Microservice
             var response = await _client.SendAsync(requestMessage);

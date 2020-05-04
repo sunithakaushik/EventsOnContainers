@@ -54,11 +54,11 @@ namespace EventCatalogApi.Controllers
             var root = (IQueryable<EventName>)_context.EventNames;
             if(eventTypeId.HasValue)
             {
-                root = root.Where(c => c.EventTypeId == eventTypeId);
+                root = root.Where(c => c.EventTypeId == eventTypeId || eventTypeId == -1);
             }
             if (eventTopicId.HasValue)
             {
-                root = root.Where(c => c.EventTopicId == eventTopicId);
+                root = root.Where(c => c.EventTopicId == eventTopicId || eventTopicId == -1);
             }
 
             var eventsCount = await root.LongCountAsync();

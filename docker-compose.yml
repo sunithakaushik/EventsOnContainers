@@ -15,15 +15,68 @@ services:
       DatabaseName: EventsDb
       DatabaseUser: sa
       DatabasePassword: ProductApi(!)
-      ExternalCatalogBaseUrl: http://localhost:6700
+      ExternalCatalogBaseUrl: http://localhost:6705
     ports:
-      - "6700:80"
+      - "6705:80"
     container_name: eventscatalogapi
     networks:
       - backend
       - frontend
     depends_on:
       - mssqlserver
+
+  cart:
+    build:
+      context: .\CartApi
+      dockerfile: Dockerfile
+    image: events/cartapi
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      IdentityUrl: http://192.168.1.2:6900
+      ConnectionString: basket.data
+    ports:
+      - "6806:80"
+    container_name: eventcartapi
+    networks:
+      - backend
+      - frontend
+    depends_on:
+      - basket.data
+      - tokenserver
+      - rabbitmq
+
+  order:
+    build:
+      context: .\OrderApi
+      dockerfile: Dockerfile
+    image: events/cartapi
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      IdentityUrl: http://192.168.1.2:6900
+      DatabaseServer: mssqlserver
+      DatabaseName: EvtOrdersDb
+      DatabaseUser: sa
+      DatabasePassword: ProductApi(!)
+    ports:
+      - "6809:80"
+    container_name: eventorderapi
+    networks:
+      - backend
+      - frontend
+    depends_on:
+      - mssqlserver
+      - tokenserver
+      - rabbitmq
 
   mssqlserver:
     image: "microsoft/mssql-server-linux:latest"
@@ -49,6 +102,7 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       MvcClient: http://localhost:5230
+      BasketApiClient: https://localhost:6806
     ports:
       - "6900:80"
     container_name: eventtokensapi
@@ -65,13 +119,41 @@ services:
     image: events/webmvc
     container_name: eventshop
     environment:
+      ASPNETCORE_ENVIRONMENT: Development
       CatalogUrl: http://catalog
-      IdentityUrl: http://192.168.1.14:6900
+      IdentityUrl: http://192.168.1.2:6900
       CallBackUrl: http://localhost:5230
+      CartUrl: http://cart
+      OrderUrl: http://order
+      StripePublicKey: pk_test_NINofcPobSKxBw8MgGNc4NIH004dXF9EBS
+      StripePrivateKey: sk_test_QyC6a2I3wM0BmVb9fUpFivaL00xcHXbHyv
     ports:
       - "5230:80"
     networks:
       - frontend
     depends_on:
       - catalog
+      - cart
+      - order
       - tokenserver
+
+  basket.data:
+    image: redis
+    container_name: evtbasketdata
+    ports:
+      - "6085:6379"
+    networks:
+      - backend
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    hostname: myrabbitmq
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+      - "5671:5671"
+    volumes:
+      - ~/rabbitmq:/var/lib/rabbitmq/mnesia   
+    networks:
+      - backend 

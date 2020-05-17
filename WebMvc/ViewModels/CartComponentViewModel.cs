@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace WebMvc.ViewModels
+{
+    // Module 24 - Added and changed cart controller with view changes
+    public class CartComponentViewModel
+    {
+        public int ItemsInCart { get; set; }
+        public decimal TotalCost { get; set; }
+        public string Disabled => (ItemsInCart == 0) ? "is-disabled" : "";
+    }
+}
